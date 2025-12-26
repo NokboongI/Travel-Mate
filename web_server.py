@@ -1231,7 +1231,12 @@ JSON: {"type": "place/route"}"""
 # 앱 설정
 # =======================================================================
 
+async def health_check(request):
+    return Response("OK", status_code=200)
+
 routes = [
+    Route("/", endpoint=health_check, methods=["GET"]),
+    Route("/health", endpoint=health_check, methods=["GET"]),
     Route("/sse", endpoint=handle_mcp, methods=["GET", "POST", "OPTIONS"]),
     Route("/sse/", endpoint=handle_mcp, methods=["GET", "POST", "OPTIONS"])
 ]
