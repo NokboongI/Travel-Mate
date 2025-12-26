@@ -25,8 +25,18 @@ NAVER_CLIENT_SECRET = os.getenv("NAVER_CLIENT_SECRET", "")
 
 # 클라이언트 초기화
 try:
-    gmaps = googlemaps.Client(key=GOOGLE_API_KEY)
-    client = AsyncOpenAI(api_key=OPENAI_API_KEY)
+    gmaps = googlemaps.Client(key=GOOGLE_API_KEY) if GOOGLE_API_KEY else None
+    
+    # Railway 환경 고려한 OpenAI 초기화
+    if OPENAI_API_KEY:
+        client = AsyncOpenAI(
+            api_key=OPENAI_API_KEY,
+            max_retries=2,
+            timeout=30.0
+        )
+    else:
+        client = None
+    
     print("✅ 초기화 완료")
 except Exception as e:
     gmaps, client = None, None
