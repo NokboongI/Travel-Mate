@@ -10,6 +10,7 @@ from starlette.middleware.cors import CORSMiddleware
 from openai import AsyncOpenAI
 import googlemaps
 import traceback
+from duckduckgo_search import DDGS
 
 # =======================================================================
 # API 키 (환경변수에서 읽기)
@@ -72,7 +73,8 @@ TOOLS_LIST = [
     },
     {
         "name": "ask_travel_advisor",
-        "description": "여행지, 숙소, 맛집, 관광지 추천 + 경로 안내 (국내: 네이버+카카오맵, 해외: 구글맵)",
+        # 수정: 설명에 규정 및 팁 안내 추가
+        "description": "여행지, 숙소, 맛집 추천 + 경로 안내 + 여행 규정(수하물, 비자, 에티켓 등) 및 팁 안내",
         "inputSchema": {
             "type": "object",
             "properties": {
@@ -1039,15 +1041,16 @@ async def handle_mcp(request):
 유형:
 - "place": 장소 검색 (숙소, 맛집, 관광지, 카페 등)
 - "route": 경로 안내 (A에서 B로, 이동 방법, 가는 법)
+- "guide": 규정/정보 (반입 금지, 수하물, 에티켓, 비자, 팁 문화 등)
 
 예시:
 - "오사카 맛집" → {"type": "place"}
 - "오사카에서 교토 가는 법" → {"type": "route"}
-- "오사카 호텔" → {"type": "place"}
-- "교토 관광지" → {"type": "place"}
-- "샤를드골에서 에펠탑" → {"type": "route"}
+- "보조배터리 기내 반입 돼?" → {"type": "guide"}
+- "일본 곤약젤리 반입 규정" → {"type": "guide"}
+- "미국 팁 문화" → {"type": "guide"}
 
-JSON: {"type": "place/route"}"""
+JSON: {"type": "place/route/guide"}"""
                             },
                             {"role": "user", "content": question}
                         ],
@@ -1059,8 +1062,53 @@ JSON: {"type": "place/route"}"""
                     
                     print(f"❓ 질문 유형: {question_type}")
                     
+                    # 규정 및 정보 안내 (검색 기능 추가)
+                    if question_type == "guide":
+                        print(f"🔍 [규정/정보] DuckDuckGo 검색 시작: {question}")
+                        
+                        try:
+                            # DuckDuckGo 검색
+                            search_results = []
+                            with DDGS() as ddgs:
+                                results = list(ddgs.text(question, max_results=3))
+                                for r in results:
+                                    search_results.append(f"- 제목: {r['title']}\n- 링크: {r['href']}\n- 내용: {r['body']}")
+                            
+                            search_text = "\n\n".join(search_results)
+                            
+                            print(f"✅ 검색 완료: {len(results)}개")
+                            
+                            # GPT 답변 생성
+                            resp = await client.chat.completions.create(
+                                model="gpt-4o",
+                                messages=[
+                                    {
+                                        "role": "system",
+                                        "content": """당신은 정확한 여행 규정을 안내하는 전문가입니다.
+제공된 [검색 결과]를 바탕으로 사용자의 질문에 답변하세요.
+
+규칙:
+1. 검색 결과에 기반하여 사실만 말하세요.
+2. 금지 품목이나 법적 규정은 엄격하게 안내하세요.
+3. 정보가 불확실하면 "최신 규정은 항공사나 대사관 확인이 필요합니다"라고 덧붙이세요.
+4. 출처 링크가 있다면 함께 표시하세요.
+"""
+                                    },
+                                    {
+                                        "role": "user",
+                                        "content": f"질문: {question}\n\n[검색 결과]\n{search_text}"
+                                    }
+                                ]
+                            )
+                            
+                            result_text = resp.choices[0].message.content
+                            
+                        except Exception as e:
+                            print(f"❌ 검색/답변 오류: {e}")
+                            result_text = "검색 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요."
+
                     # 경로 질문
-                    if question_type == "route":
+                    elif question_type == "route":
                         regions = await extract_regions_hybrid(question, client)
                         
                         if len(regions) < 2:
@@ -1249,14 +1297,13 @@ app = Starlette(routes=routes, middleware=middleware)
 
 if __name__ == "__main__":
     print("=" * 60)
-    print("🚀 Travel-Mate v12.0 - 재검색 로직 추가")
+    print("🚀 Travel-Mate v13.0 - 여행 규정 및 팁 안내 (검색 기능) 추가")
     print("=" * 60)
+    print("✅ DuckDuckGo 검색 연동")
+    print("✅ 규정/에티켓 질문 자동 감지")
     print("✅ GPT 필터링 완화 (최소 5개)")
     print("✅ 결과 부족 시 재검색 (display=50)")
-    print("✅ 재검색 최대 1회")
-    print("✅ 중복 제거 자동")
     print("=" * 60)
     
-    # 수정: Railway 동적 포트 사용
     port = int(os.getenv("PORT", 8000))
     uvicorn.run(app, host="0.0.0.0", port=port)

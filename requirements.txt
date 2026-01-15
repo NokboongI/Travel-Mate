@@ -3,3 +3,4 @@ starlette==0.36.3
 openai==1.54.0
 googlemaps==4.10.0
 requests==2.31.0
+duckduckgo-search>=4.0.0
