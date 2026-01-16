@@ -1288,7 +1288,7 @@ JSON: {"type": "place/route/guide"}"""
                                     "role": "system",
                                     "content": """질문에서 검색 키워드만 추출하세요.
 
-형식: {"keywords": ["검색어"]}
+JSON 형식: {"keywords": ["검색어"]}
 
 중요: keywords는 핵심 단어만 짧고 명확하게!
 
