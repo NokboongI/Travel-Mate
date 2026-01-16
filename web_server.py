@@ -128,7 +128,7 @@ TOOLS_LIST = [
     }
 ]
 
-# 자주 쓰는 지역명
+# 자주 쓰는 지역명 (대폭 확장)
 FAST_REGIONS = {
     # 한국
     "서울", "부산", "인천", "대구", "광주", "대전", "울산", "세종",
@@ -138,20 +138,62 @@ FAST_REGIONS = {
     "해운대", "광안리", "남포동", "송도", "구월동", "송파", "강동",
     "제주", "서귀포", "애월", "성산",
     
-    # 일본
+    # 일본 (대폭 확장)
     "도쿄", "tokyo", "신주쿠", "shinjuku", "시부야", "shibuya",
     "아키하바라", "akihabara", "나카노", "nakano", "이케부쿠로", "ikebukuro",
     "우에노", "ueno", "하라주쿠", "harajuku", "롯폰기", "roppongi",
     "오사카", "osaka", "난바", "namba", "도톤보리", "dotonbori", "우메다", "umeda",
     "교토", "kyoto", "후시미", "fushimi", "기온", "gion",
+    "나고야", "nagoya",  # 추가
+    "후쿠오카", "fukuoka", "하카타", "hakata",  # 추가
+    "삿포로", "sapporo",  # 추가
+    "오키나와", "okinawa", "나하", "naha",  # 추가
+    "히로시마", "hiroshima",  # 추가
+    "고베", "kobe",  # 추가
+    "요코하마", "yokohama",  # 추가
     
     # 프랑스
     "파리", "paris", "샤를드골", "charles de gaulle", "에펠탑", "eiffel",
     "루브르", "louvre", "몽마르트", "montmartre", "샹젤리제", "champs elysees",
     
-    # 기타
-    "런던", "london", "뉴욕", "new york", "LA", "los angeles",
-    "베를린", "berlin", "로마", "rome", "바르셀로나", "barcelona"
+    # 미국 (대폭 확장)
+    "뉴욕", "new york", "맨해튼", "manhattan", "브루클린", "brooklyn",
+    "LA", "los angeles", "할리우드", "hollywood", "산타모니카", "santa monica",
+    "샌프란시스코", "san francisco",
+    "라스베가스", "las vegas",
+    "시카고", "chicago",
+    "마이애미", "miami",
+    "시애틀", "seattle",
+    "보스턴", "boston",
+    "워싱턴", "washington", "washington dc",
+    "텍사스", "texas", "휴스턴", "houston", "달라스", "dallas", "오스틴", "austin",  # 추가
+    "하와이", "hawaii", "호놀룰루", "honolulu",  # 추가
+    
+    # 기타 유럽
+    "런던", "london",
+    "베를린", "berlin",
+    "로마", "rome",
+    "바르셀로나", "barcelona",
+    "암스테르담", "amsterdam",
+    "프라하", "prague",
+    "비엔나", "vienna",
+    
+    # 동남아
+    "방콕", "bangkok",
+    "싱가포르", "singapore",
+    "발리", "bali",
+    "다낭", "danang",
+    "호치민", "ho chi minh",
+    "하노이", "hanoi",
+    
+    # 중국
+    "상하이", "shanghai",
+    "베이징", "beijing",
+    "홍콩", "hong kong",
+    
+    # 호주
+    "시드니", "sydney",
+    "멜버른", "melbourne"
 }
 
 # 지역 확장 맵 (한국만!)
@@ -175,12 +217,117 @@ KOREA_REGIONS = {
     "제주", "서귀포", "애월", "성산"
 }
 
-# 해외 주요 도시
+# 해외 주요 도시 (대폭 확장 + 국가 매핑)
 INTERNATIONAL_CITIES = {
+    # 일본
     "도쿄", "tokyo", "오사카", "osaka", "교토", "kyoto",
     "나카노", "nakano", "신주쿠", "shinjuku", "시부야", "shibuya",
+    "나고야", "nagoya", "후쿠오카", "fukuoka", "삿포로", "sapporo",
+    "오키나와", "okinawa", "히로시마", "hiroshima", "고베", "kobe",
+    "요코하마", "yokohama", "하카타", "hakata", "나하", "naha",
+    
+    # 프랑스
     "파리", "paris", "샤를드골", "charles", "에펠탑", "eiffel",
-    "런던", "london", "뉴욕", "new york", "LA", "los angeles"
+    
+    # 미국
+    "뉴욕", "new york", "LA", "los angeles", "샌프란시스코", "san francisco",
+    "라스베가스", "las vegas", "시카고", "chicago", "마이애미", "miami",
+    "시애틀", "seattle", "보스턴", "boston", "워싱턴", "washington",
+    "텍사스", "texas", "휴스턴", "houston", "달라스", "dallas", "오스틴", "austin",
+    "하와이", "hawaii", "호놀룰루", "honolulu",
+    
+    # 기타
+    "런던", "london", "베를린", "berlin", "로마", "rome",
+    "방콕", "bangkok", "싱가포르", "singapore", "홍콩", "hong kong"
+}
+
+# 수정: 도시 -> 국가 매핑 (Google Places 검색 정확도 향상)
+CITY_TO_COUNTRY = {
+    # 일본
+    "도쿄": "Japan", "tokyo": "Japan",
+    "오사카": "Japan", "osaka": "Japan",
+    "교토": "Japan", "kyoto": "Japan",
+    "나고야": "Japan", "nagoya": "Japan",
+    "후쿠오카": "Japan", "fukuoka": "Japan",
+    "삿포로": "Japan", "sapporo": "Japan",
+    "오키나와": "Japan", "okinawa": "Japan",
+    "히로시마": "Japan", "hiroshima": "Japan",
+    "고베": "Japan", "kobe": "Japan",
+    "요코하마": "Japan", "yokohama": "Japan",
+    "신주쿠": "Japan", "shinjuku": "Japan",
+    "시부야": "Japan", "shibuya": "Japan",
+    "나카노": "Japan", "nakano": "Japan",
+    "하카타": "Japan", "hakata": "Japan",
+    "나하": "Japan", "naha": "Japan",
+    "아키하바라": "Japan", "akihabara": "Japan",
+    "이케부쿠로": "Japan", "ikebukuro": "Japan",
+    "우에노": "Japan", "ueno": "Japan",
+    "하라주쿠": "Japan", "harajuku": "Japan",
+    "롯폰기": "Japan", "roppongi": "Japan",
+    "난바": "Japan", "namba": "Japan",
+    "도톤보리": "Japan", "dotonbori": "Japan",
+    "우메다": "Japan", "umeda": "Japan",
+    "후시미": "Japan", "fushimi": "Japan",
+    "기온": "Japan", "gion": "Japan",
+    
+    # 미국
+    "뉴욕": "USA", "new york": "USA",
+    "LA": "USA", "los angeles": "USA",
+    "샌프란시스코": "USA", "san francisco": "USA",
+    "라스베가스": "USA", "las vegas": "USA",
+    "시카고": "USA", "chicago": "USA",
+    "마이애미": "USA", "miami": "USA",
+    "시애틀": "USA", "seattle": "USA",
+    "보스턴": "USA", "boston": "USA",
+    "워싱턴": "USA", "washington": "USA",
+    "텍사스": "USA", "texas": "USA",
+    "휴스턴": "USA", "houston": "USA",
+    "달라스": "USA", "dallas": "USA",
+    "오스틴": "USA", "austin": "USA",
+    "하와이": "USA", "hawaii": "USA",
+    "호놀룰루": "USA", "honolulu": "USA",
+    "맨해튼": "USA", "manhattan": "USA",
+    "브루클린": "USA", "brooklyn": "USA",
+    "할리우드": "USA", "hollywood": "USA",
+    "산타모니카": "USA", "santa monica": "USA",
+    
+    # 프랑스
+    "파리": "France", "paris": "France",
+    
+    # 영국
+    "런던": "UK", "london": "UK",
+    
+    # 독일
+    "베를린": "Germany", "berlin": "Germany",
+    
+    # 이탈리아
+    "로마": "Italy", "rome": "Italy",
+    
+    # 스페인
+    "바르셀로나": "Spain", "barcelona": "Spain",
+    
+    # 태국
+    "방콕": "Thailand", "bangkok": "Thailand",
+    
+    # 싱가포르
+    "싱가포르": "Singapore", "singapore": "Singapore",
+    
+    # 중국/홍콩
+    "홍콩": "Hong Kong", "hong kong": "Hong Kong",
+    "상하이": "China", "shanghai": "China",
+    "베이징": "China", "beijing": "China",
+    
+    # 베트남
+    "다낭": "Vietnam", "danang": "Vietnam",
+    "호치민": "Vietnam", "ho chi minh": "Vietnam",
+    "하노이": "Vietnam", "hanoi": "Vietnam",
+    
+    # 인도네시아
+    "발리": "Indonesia", "bali": "Indonesia",
+    
+    # 호주
+    "시드니": "Australia", "sydney": "Australia",
+    "멜버른": "Australia", "melbourne": "Australia",
 }
 
 # 해외 키워드
@@ -250,6 +397,23 @@ def is_international_route(start, goal):
     
     return False
 
+def get_country_for_city(city_name):
+    """도시명으로 국가 찾기"""
+    city_lower = city_name.lower()
+    
+    # 직접 매핑 확인
+    if city_lower in CITY_TO_COUNTRY:
+        return CITY_TO_COUNTRY[city_lower]
+    if city_name in CITY_TO_COUNTRY:
+        return CITY_TO_COUNTRY[city_name]
+    
+    # 부분 매칭
+    for city, country in CITY_TO_COUNTRY.items():
+        if city in city_lower or city_lower in city:
+            return country
+    
+    return None
+
 async def translate_to_english(text, client):
     """지역/키워드를 영어로 변환"""
     
@@ -266,6 +430,7 @@ async def translate_to_english(text, client):
 
 예시:
 - "도쿄역" -> "Tokyo Station"
+- "나고야" -> "Nagoya"
 - "나카노브로드웨이" -> "Nakano Broadway"
 - "샤를드골" -> "Charles de Gaulle Airport"
 - "에펠탑" -> "Eiffel Tower"
@@ -277,6 +442,7 @@ async def translate_to_english(text, client):
 - "맛집" -> "restaurant"
 - "관광지" -> "tourist attraction"
 - "카페" -> "cafe"
+- "바비큐" -> "BBQ restaurant"
 
 JSON: {"english": "..."}"""
                 },
@@ -298,7 +464,58 @@ JSON: {"english": "..."}"""
         print(f"번역 실패: {e}, 원본 사용")
         return text
 
-# 수정: 랜드마크/대학교 인식 강화
+# 수정: 지역 + 국가 컨텍스트 추출
+async def extract_regions_with_context(text, client):
+    """지역명 + 국가 컨텍스트 추출 (핵심 개선)"""
+    
+    if not client:
+        return [], None
+    
+    try:
+        resp = await client.chat.completions.create(
+            model="gpt-4o",
+            messages=[
+                {
+                    "role": "system",
+                    "content": """사용자의 여행 질문에서 **지역명**과 **국가**를 추출하세요.
+
+중요 규칙:
+1. 지역명만 언급되면 가장 유명한/일반적인 국가로 추론
+2. "나고야" -> 일본 나고야 (미국 아님)
+3. "텍사스 바비큐" -> 미국 텍사스
+4. "파리 맛집" -> 프랑스 파리 (미국 텍사스의 Paris가 아님)
+5. 대학교/랜드마크도 지역으로 인식
+
+예시:
+- "나고야 맛집" -> {"regions": ["나고야"], "country": "Japan", "country_kr": "일본"}
+- "텍사스 바비큐" -> {"regions": ["텍사스"], "country": "USA", "country_kr": "미국"}
+- "도쿄 시부야 숙소" -> {"regions": ["시부야", "도쿄"], "country": "Japan", "country_kr": "일본"}
+- "파리 에펠탑" -> {"regions": ["에펠탑", "파리"], "country": "France", "country_kr": "프랑스"}
+- "LA 맛집" -> {"regions": ["LA"], "country": "USA", "country_kr": "미국"}
+- "숭실대 라멘" -> {"regions": ["숭실대"], "country": "Korea", "country_kr": "한국"}
+- "강남 맛집" -> {"regions": ["강남"], "country": "Korea", "country_kr": "한국"}
+- "방콕 맛집" -> {"regions": ["방콕"], "country": "Thailand", "country_kr": "태국"}
+- "발리 숙소" -> {"regions": ["발리"], "country": "Indonesia", "country_kr": "인도네시아"}
+
+JSON: {"regions": ["지역1", "지역2"], "country": "영문국가명", "country_kr": "한글국가명"}"""
+                },
+                {"role": "user", "content": text}
+            ],
+            response_format={"type": "json_object"},
+            timeout=5
+        )
+        
+        data = json.loads(resp.choices[0].message.content)
+        regions = data.get('regions', [])
+        country = data.get('country', None)
+        country_kr = data.get('country_kr', None)
+        
+        return regions, {"country": country, "country_kr": country_kr}
+        
+    except Exception as e:
+        print(f"GPT 지역/국가 추출 실패: {e}")
+        return [], None
+
 async def extract_regions_hybrid(text, client):
     """하이브리드 지역명 추출 (랜드마크/대학교 강화)"""
     
@@ -313,7 +530,7 @@ async def extract_regions_hybrid(text, client):
     found = list(set(found))
     found.sort(key=len, reverse=True)
     
-    # 2단계: GPT로 보완 (프롬프트 대폭 강화)
+    # 2단계: GPT로 보완
     if not client:
         return found[:3] if found else []
     
@@ -330,15 +547,13 @@ async def extract_regions_hybrid(text, client):
 2. 지하철역: 강남역, 홍대입구역, 서울대입구역, 신촌역, 건대입구역, 왕십리역, 잠실역 등
 3. 랜드마크: 롯데타워, 코엑스, IFC몰, 타임스퀘어, 동대문DDP, 명동성당, 남산타워 등
 4. 행정구역: 서울, 강남, 부산, 제주 등
+5. 해외 도시: 도쿄, 오사카, 나고야, 파리, 뉴욕, 텍사스 등
 
 예시:
 - "숭실대 인근 라멘" -> {"regions": ["숭실대"]}
-- "고려대 근처 중식당" -> {"regions": ["고려대"]}
-- "서울대입구역 맛집" -> {"regions": ["서울대입구역"]}
-- "건대 근처 술집" -> {"regions": ["건국대", "건대입구역"]}
-- "롯데타워 맛집" -> {"regions": ["롯데타워", "잠실"]}
-- "홍대 카페" -> {"regions": ["홍대", "홍대입구역"]}
-- "강남역 맛집" -> {"regions": ["강남역", "강남"]}
+- "나고야 맛집" -> {"regions": ["나고야"]}
+- "텍사스 바비큐" -> {"regions": ["텍사스"]}
+- "도쿄 시부야 숙소" -> {"regions": ["시부야", "도쿄"]}
 
 주의:
 - "인근", "근처", "주변" 같은 단어는 제외
@@ -456,28 +671,23 @@ JSON: {{"relevant_indices": [번호들]}}"""
         traceback.print_exc()
         return place_names
 
-# 수정: 랜드마크 검색 로직 강화
 async def search_domestic(keyword, regions, client, retry=False):
     """국내 검색: 랜드마크 우선 검색 -> 네이버 -> GPT 필터링 -> 카카오맵 검증"""
     
     expanded_regions = expand_regions(regions) if regions else []
     
-    # 수정: 랜드마크/대학교인 경우 카카오맵 직접 검색 우선
+    # 랜드마크/대학교인 경우 카카오맵 직접 검색 우선
     landmark_keywords = []
     for region in regions:
-        # 대학교 패턴 감지
         if any(univ in region for univ in ['대', '대학', '대학교']):
             landmark_keywords.append(region)
-        # 역 패턴 감지
         elif '역' in region:
             landmark_keywords.append(region)
-        # 기타 랜드마크
         elif region in ['롯데타워', '코엑스', 'IFC', '타임스퀘어', 'DDP']:
             landmark_keywords.append(region)
     
     kakao_direct_results = []
     
-    # 랜드마크가 있으면 카카오맵 직접 검색 먼저
     if landmark_keywords:
         for landmark in landmark_keywords:
             try:
@@ -550,7 +760,7 @@ async def search_domestic(keyword, regions, client, retry=False):
     kakao_candidates = []
     seen_ids = set()
     
-    # 수정: 카카오맵 직접 검색 결과 먼저 추가
+    # 카카오맵 직접 검색 결과 먼저 추가
     for p in kakao_direct_results:
         if p['id'] not in seen_ids:
             seen_ids.add(p['id'])
@@ -601,7 +811,7 @@ async def search_domestic(keyword, regions, client, retry=False):
                 
                 addr = (p.get('address_name', '') + ' ' + p.get('road_address_name', '')).lower()
                 
-                # 수정: 랜드마크 검색 시 지역 필터링 완화
+                # 랜드마크 검색 시 지역 필터링 완화
                 if expanded_regions and not landmark_keywords:
                     if not any(region.lower() in addr for region in expanded_regions):
                         continue
@@ -659,16 +869,40 @@ def format_places_result(keyword, places):
     
     return result
 
-async def search_international(keyword, regions, client):
-    """해외 검색: Places API 직접 호출"""
+# 수정: 국가 컨텍스트를 활용한 해외 검색
+async def search_international(keyword, regions, client, country_context=None):
+    """해외 검색: 국가 컨텍스트 활용 (핵심 개선)"""
     
+    # 국가 정보 결정
+    country = None
+    country_kr = None
+    
+    if country_context:
+        country = country_context.get('country')
+        country_kr = country_context.get('country_kr')
+    
+    # country_context가 없으면 regions에서 추론
+    if not country and regions:
+        for region in regions:
+            found_country = get_country_for_city(region)
+            if found_country:
+                country = found_country
+                break
+    
+    # GPT로 영어 변환
     region_en = await translate_to_english(regions[0], client) if regions else ""
     keyword_en = await translate_to_english(keyword, client)
     
-    if regions:
-        query = f"{keyword_en} near {region_en}"
+    # 수정: 국가명을 쿼리에 포함하여 정확도 향상
+    if country and regions:
+        # "hotel in Nagoya, Japan" 형식
+        query = f"{keyword_en} in {region_en}, {country}"
+    elif regions:
+        query = f"{keyword_en} in {region_en}"
     else:
         query = keyword_en
+    
+    print(f"Google Places 쿼리: {query}")
     
     try:
         result = gmaps.places(
@@ -678,6 +912,7 @@ async def search_international(keyword, regions, client):
         
         places = result.get('results', [])
         
+        # 한국 주소 필터링 (해외 검색인데 한국이 나오면 제외)
         filtered = []
         for p in places:
             addr = p.get('formatted_address', '').lower()
@@ -692,7 +927,12 @@ async def search_international(keyword, regions, client):
         if len(places) < 1:
             return f"'{keyword}' 검색 결과 없음"
         
-        output = f"""# {keyword} 검색 결과 ({len(places)}개)
+        # 지역명 표시 (국가 포함)
+        region_display = regions[0] if regions else ""
+        if country_kr:
+            region_display = f"{country_kr} {region_display}"
+        
+        output = f"""# {region_display} {keyword} 검색 결과 ({len(places)}개)
 
 """
         
@@ -722,8 +962,7 @@ async def search_international(keyword, regions, client):
 """
             
             if addr:
-                short_addr = addr.split(',')[0] if ',' in addr else addr
-                output += f"**주소:** {short_addr[:50]}\n"
+                output += f"**주소:** {addr}\n"
             
             output += "\n"
         
@@ -749,11 +988,12 @@ async def get_route_info(start, goal, start_original, goal_original, client):
                         "content": """질문이 국내/해외 여행인지 판단하세요.
 
 한국 지역: 서울, 부산, 제주, 강남, 잠실, 광교, 송파, 해운대, 경주
-해외 지역: 도쿄, 오사카, 교토, 나카노, 파리, 런던
+해외 지역: 도쿄, 오사카, 교토, 나카노, 파리, 런던, 나고야, 텍사스
 
 예시:
 - "강남 -> 잠실" -> {"is_international": false}
 - "오사카 -> 교토" -> {"is_international": true}
+- "나고야 -> 도쿄" -> {"is_international": true}
 
 JSON: {"is_international": bool}"""
                     },
@@ -869,14 +1109,14 @@ async def handle_mcp(request):
     if request.method == "OPTIONS":
         return Response("", status_code=200)
     
-    # 수정: GET 요청 시 405 반환 (스펙 준수 - stateless 서버)
+    # GET 요청 시 405 반환 (스펙 준수 - stateless 서버)
     if request.method == "GET":
         return Response("SSE stream not supported", status_code=405)
     
     if request.method != "POST":
         return Response("Method not allowed", status_code=405)
     
-    # 수정: Accept 헤더 검증 (스펙 요구사항)
+    # Accept 헤더 검증
     accept_header = request.headers.get("Accept", "")
     if accept_header and "application/json" not in accept_header and "text/event-stream" not in accept_header and "*/*" not in accept_header:
         return Response("Accept header must include application/json or text/event-stream", status_code=400)
@@ -897,11 +1137,11 @@ async def handle_mcp(request):
             "result": {
                 "protocolVersion": "2025-03-26",
                 "capabilities": {"tools": {}},
-                "serverInfo": {"name": "TravelMate", "version": "14.0"}
+                "serverInfo": {"name": "TravelMate", "version": "15.0"}
             }
         })
     
-    # 수정: notifications/initialized는 202 Accepted 반환 (스펙 준수)
+    # notifications/initialized는 202 Accepted 반환 (스펙 준수)
     if method == "notifications/initialized":
         return Response("", status_code=202)
     
@@ -960,6 +1200,8 @@ async def handle_mcp(request):
 
 예시:
 - "오사카 맛집" -> {"type": "place"}
+- "나고야 숙소" -> {"type": "place"}
+- "텍사스 바비큐" -> {"type": "place"}
 - "숭실대 라멘" -> {"type": "place"}
 - "고려대 중식당" -> {"type": "place"}
 - "오사카에서 교토 가는 법" -> {"type": "route"}
@@ -1027,32 +1269,34 @@ JSON: {"type": "place/route/guide"}"""
                                 client
                             )
                     
-                    # 장소 검색
+                    # 장소 검색 (핵심 개선)
                     else:
-                        # 1단계: 지역명 추출 (랜드마크 포함)
-                        regions = await extract_regions_hybrid(question, client)
+                        # 수정: 지역 + 국가 컨텍스트 동시 추출
+                        regions, country_context = await extract_regions_with_context(question, client)
                         
-                        # 2단계: 키워드 추출 + 국내/해외 판단
-                        check = await client.chat.completions.create(
+                        # 국내/해외 판단 (country_context 활용)
+                        is_korea = False
+                        if country_context:
+                            country = country_context.get('country', '')
+                            is_korea = country.lower() in ['korea', 'south korea', '한국']
+                        
+                        # 키워드 추출
+                        keyword_check = await client.chat.completions.create(
                             model="gpt-4o",
                             messages=[
                                 {
                                     "role": "system",
-                                    "content": """질문을 분석하여 JSON으로 반환하세요.
+                                    "content": """질문에서 검색 키워드만 추출하세요.
 
-국내: 서울, 부산, 인천, 제주, 경주, 숭실대, 고려대, 서울대 등 한국
-해외: 도쿄, 오사카, 파리, 런던 등 외국
-
-형식: {"is_intl": bool, "keywords": ["검색어"]}
+형식: {"keywords": ["검색어"]}
 
 중요: keywords는 핵심 단어만 짧고 명확하게!
 
 예시:
-- "강남 라멘" -> {"is_intl": false, "keywords": ["라멘"]}
-- "숭실대 인근 라멘" -> {"is_intl": false, "keywords": ["라멘"]}
-- "고려대 근처 중식당" -> {"is_intl": false, "keywords": ["중식당"]}
-- "도쿄역 인근 맛집 추천" -> {"is_intl": true, "keywords": ["맛집"]}
-- "시부야 숙소, 맛집, 관광지" -> {"is_intl": true, "keywords": ["숙소", "맛집", "관광지"]}
+- "강남 라멘" -> {"keywords": ["라멘"]}
+- "나고야 맛집" -> {"keywords": ["맛집"]}
+- "텍사스 바비큐 가게" -> {"keywords": ["바비큐"]}
+- "도쿄 시부야 숙소, 맛집, 관광지" -> {"keywords": ["숙소", "맛집", "관광지"]}
 
 절대 금지:
 - "인근", "근처", "추천", "찾아줘" 같은 불필요한 단어
@@ -1063,9 +1307,8 @@ JSON: {"type": "place/route/guide"}"""
                             response_format={"type": "json_object"}
                         )
                         
-                        data = json.loads(check.choices[0].message.content)
-                        is_intl = data.get('is_intl', False)
-                        keywords = data.get('keywords', [])
+                        keyword_data = json.loads(keyword_check.choices[0].message.content)
+                        keywords = keyword_data.get('keywords', [])
                         
                         results = []
                         
@@ -1073,13 +1316,10 @@ JSON: {"type": "place/route/guide"}"""
                             if not kw.strip():
                                 continue
                             
-                            if is_intl:
-                                res = await search_international(kw, regions, client)
-                            else:
-                                # 1차 검색
+                            if is_korea:
+                                # 국내 검색
                                 places = await search_domestic(kw, regions, client, retry=False)
                                 
-                                # 재시도 로직 (5개 미만이면)
                                 if isinstance(places, list) and len(places) < 5:
                                     more_places = await search_domestic(kw, regions, client, retry=True)
                                     
@@ -1092,6 +1332,9 @@ JSON: {"type": "place/route/guide"}"""
                                                     break
                                 
                                 res = format_places_result(kw, places)
+                            else:
+                                # 해외 검색 (국가 컨텍스트 전달)
+                                res = await search_international(kw, regions, client, country_context)
                             
                             if res and len(res) > 50 and "검색 결과 없음" not in res:
                                 results.append(res)
@@ -1180,9 +1423,7 @@ async def health_check(request):
 routes = [
     Route("/", endpoint=health_check, methods=["GET"]),
     Route("/health", endpoint=health_check, methods=["GET"]),
-    # 수정: /mcp 엔드포인트 추가 (스펙 권장)
     Route("/mcp", endpoint=handle_mcp, methods=["GET", "POST", "OPTIONS"]),
-    # 기존 /sse 유지 (호환성)
     Route("/sse", endpoint=handle_mcp, methods=["GET", "POST", "OPTIONS"]),
     Route("/sse/", endpoint=handle_mcp, methods=["GET", "POST", "OPTIONS"])
 ]
@@ -1195,14 +1436,14 @@ app = Starlette(routes=routes, middleware=middleware)
 
 if __name__ == "__main__":
     print("=" * 60)
-    print("Travel-Mate v14.0")
+    print("Travel-Mate v15.0")
     print("=" * 60)
     print("MCP Protocol Version: 2025-03-26 (PlayMCP 호환)")
-    print("수정사항:")
-    print("  - notifications/initialized: 202 Accepted 반환")
-    print("  - Accept 헤더 검증 추가")
-    print("  - /mcp 엔드포인트 추가")
-    print("  - 랜드마크/대학교 검색 강화")
+    print("핵심 개선사항:")
+    print("  - 국가 컨텍스트 자동 추론 (나고야->일본, 텍사스->미국)")
+    print("  - Google Places 쿼리에 국가명 포함")
+    print("  - CITY_TO_COUNTRY 매핑 추가")
+    print("  - 해외 도시 목록 대폭 확장")
     print("=" * 60)
     
     port = int(os.getenv("PORT", 8000))
