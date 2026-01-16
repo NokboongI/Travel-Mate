@@ -10,7 +10,7 @@ from starlette.middleware.cors import CORSMiddleware
 from openai import AsyncOpenAI
 import googlemaps
 import traceback
-from duckduckgo_search import DDGS
+from duckduckgo_search import DDGS  # [추가] 검색 라이브러리
 
 # =======================================================================
 # API 키 (환경변수에서 읽기)
@@ -73,7 +73,6 @@ TOOLS_LIST = [
     },
     {
         "name": "ask_travel_advisor",
-        # 수정: 설명에 규정 및 팁 안내 추가
         "description": "여행지, 숙소, 맛집 추천 + 경로 안내 + 여행 규정(수하물, 비자, 에티켓 등) 및 팁 안내",
         "inputSchema": {
             "type": "object",
@@ -206,7 +205,7 @@ def get_xy(keyword):
     keyword_lower = keyword.lower()
     for city in INTERNATIONAL_CITIES:
         if city in keyword_lower:
-            print(f"⚠️ '{keyword}'는 해외 도시 → 카카오맵 건너뜀")
+            # print(f"⚠️ '{keyword}'는 해외 도시 → 카카오맵 건너뜀")
             return None, None, None
     
     if not KAKAO_API_KEY: 
@@ -305,7 +304,7 @@ JSON: {"english": "..."}"""
         data = json.loads(resp.choices[0].message.content)
         english = data.get('english', text)
         
-        print(f"🌐 번역: '{text}' → '{english}'")
+        # print(f"🌐 번역: '{text}' → '{english}'")
         
         return english
     
@@ -328,7 +327,7 @@ async def extract_regions_hybrid(text, client):
     found = list(set(found))
     found.sort(key=len, reverse=True)
     
-    print(f"📍 규칙 기반 지역: {found}")
+    # print(f"📍 규칙 기반 지역: {found}")
     
     if len(found) >= 2:
         return found[:3]
@@ -338,7 +337,7 @@ async def extract_regions_hybrid(text, client):
         return found[:3] if found else []
     
     try:
-        print("⚠️ 지역명 부족 → GPT 호출")
+        # print("⚠️ 지역명 부족 → GPT 호출")
         resp = await client.chat.completions.create(
             model="gpt-4o-mini",
             messages=[
@@ -381,7 +380,7 @@ JSON: {"regions": ["지역1", "지역2"]}"""
         data = json.loads(resp.choices[0].message.content)
         gpt_regions = data.get('regions', [])
         
-        print(f"💡 GPT 추출 지역: {gpt_regions}")
+        # print(f"💡 GPT 추출 지역: {gpt_regions}")
         
         # 결합
         all_regions = list(set(found + gpt_regions))
@@ -417,7 +416,7 @@ def search_naver_local(keyword, regions=[], display=30):
         
         query = f"{regions[0]} {keyword}" if regions else keyword
         
-        print(f"🔍 네이버 검색: '{query}' (display={display})")
+        # print(f"🔍 네이버 검색: '{query}' (display={display})")
         
         resp = requests.get(
             url,
@@ -426,14 +425,12 @@ def search_naver_local(keyword, regions=[], display=30):
             timeout=10
         )
         
-        print(f"📡 네이버 응답: {resp.status_code}")
-        
         if resp.status_code != 200:
             print(f"❌ 네이버 오류: {resp.text[:200]}")
             return []
         
         items = resp.json().get('items', [])
-        print(f"✅ 네이버: {len(items)}개")
+        # print(f"✅ 네이버: {len(items)}개")
         
         return items
     
@@ -494,7 +491,7 @@ JSON: {{"relevant_indices": [번호들]}}"""
         data = json.loads(resp.choices[0].message.content)
         relevant_indices = set(data.get('relevant_indices', []))
         
-        print(f"🤖 GPT 필터링: {len(place_names)}개 → {len(relevant_indices)}개 선택")
+        # print(f"🤖 GPT 필터링: {len(place_names)}개 → {len(relevant_indices)}개 선택")
         
         return [place_names[i-1] for i in relevant_indices if 1 <= i <= len(place_names)]
     
@@ -506,11 +503,10 @@ JSON: {{"relevant_indices": [번호들]}}"""
 async def search_domestic(keyword, regions, client, retry=False):
     """국내 검색: 네이버 → GPT 필터링 → 카카오맵 검증 → GPT 재필터링"""
     
-    print(f"🔍 [국내검색] '{keyword}', 지역: {regions}, 재시도: {retry}")
+    # print(f"🔍 [국내검색] '{keyword}', 지역: {regions}, 재시도: {retry}")
     
     # 지역 확장
     expanded_regions = expand_regions(regions) if regions else []
-    print(f"📍 확장된 지역: {expanded_regions}")
     
     # 1단계: 네이버 검색 (재시도 시 display 증가)
     display = 50 if retry else 30
@@ -518,7 +514,7 @@ async def search_domestic(keyword, regions, client, retry=False):
     
     # 네이버 실패 시 카카오맵 직접 검색
     if not naver_items and regions:
-        print(f"⚠️ 네이버 0개 → 카카오맵 직접 검색")
+        # print(f"⚠️ 네이버 0개 → 카카오맵 직접 검색")
         
         try:
             resp = requests.get(
@@ -533,7 +529,6 @@ async def search_domestic(keyword, regions, client, retry=False):
             
             if resp.status_code == 200:
                 kakao_direct = resp.json().get("documents", [])
-                print(f"📍 카카오맵 직접: {len(kakao_direct)}개")
                 
                 # naver 형식으로 변환
                 naver_items = []
@@ -559,8 +554,6 @@ async def search_domestic(keyword, regions, client, retry=False):
         
         candidate_names.append(place_name)
         candidate_items[place_name] = item
-    
-    print(f"📦 후보: {len(candidate_names)}개")
     
     # 3단계: 네이버 결과 GPT 배치 필터링
     relevant_names = await filter_relevant_places_batch(
@@ -594,7 +587,6 @@ async def search_domestic(keyword, regions, client, retry=False):
             
             # 카카오맵에서 못 찾으면 네이버 데이터 직접 사용
             if not places:
-                print(f"  ⚠️ 카카오맵 없음, 네이버 사용: {place_name}")
                 
                 fake_place = {
                     'id': f"naver_{len(kakao_candidates)}",
@@ -634,8 +626,6 @@ async def search_domestic(keyword, regions, client, retry=False):
         except Exception as e:
             continue
     
-    print(f"📦 카카오맵 후보: {len(kakao_candidates)}개")
-    
     # 5단계: 카카오맵 결과 GPT 배치 재필터링
     if kakao_candidates:
         kakao_names = [p['place_name'] for p in kakao_candidates]
@@ -652,15 +642,9 @@ async def search_domestic(keyword, regions, client, retry=False):
             if p['place_name'] in final_names:
                 all_places.append(p)
                 
-                link_type = "네이버" if "naver" in p.get('id', '') else "카카오맵"
-                print(f"  ✅ {p['place_name']} ({link_type})")
-                
-                if len(all_places) >= 10:
-                    break
+                # if len(all_places) >= 10: break
     else:
         all_places = []
-    
-    print(f"✅ [최종] {len(all_places)}개")
     
     return all_places  # 리스트 반환
 
@@ -698,7 +682,7 @@ def format_places_result(keyword, places):
 async def search_international(keyword, regions, client):
     """해외 검색: Places API 직접 호출 (개선판)"""
     
-    print(f"🌍 [해외검색] '{keyword}', 지역: {regions}")
+    # print(f"🌍 [해외검색] '{keyword}', 지역: {regions}")
     
     # GPT로 영어 변환
     region_en = await translate_to_english(regions[0], client) if regions else ""
@@ -710,7 +694,7 @@ async def search_international(keyword, regions, client):
     else:
         query = keyword_en
     
-    print(f"🔍 Places API 쿼리: '{query}'")
+    # print(f"🔍 Places API 쿼리: '{query}'")
     
     try:
         # type 파라미터 제거 (호텔/카페/관광지 모두 검색)
@@ -721,7 +705,7 @@ async def search_international(keyword, regions, client):
         
         places = result.get('results', [])
         
-        print(f"✅ Places API: {len(places)}개 발견")
+        # print(f"✅ Places API: {len(places)}개 발견")
         
         # 한국 주소 필터링
         filtered = []
@@ -729,14 +713,14 @@ async def search_international(keyword, regions, client):
             addr = p.get('formatted_address', '').lower()
             
             if any(kr in addr for kr in ['대한민국', 'korea', ' kr', 'south korea', '서울', '부산', '경기', '인천']):
-                print(f"  ❌ 한국 주소 제외: {p.get('name')}")
+                # print(f"  ❌ 한국 주소 제외: {p.get('name')}")
                 continue
             
             filtered.append(p)
         
         places = filtered
         
-        print(f"✅ 필터링 후: {len(places)}개")
+        # print(f"✅ 필터링 후: {len(places)}개")
         
         if len(places) < 1:
             return f"❌ '{keyword}' 검색 결과 없음"
@@ -790,11 +774,11 @@ async def search_international(keyword, regions, client):
 async def get_route_info(start, goal, start_original, goal_original, client):
     """경로 계산 공통 함수"""
     
-    print(f"🚗 경로: {start} → {goal}")
+    # print(f"🚗 경로: {start} → {goal}")
     
     # 빠른 해외 체크
     if is_international_route(start, goal):
-        print("🌍 해외 도시 감지 → 구글맵")
+        # print("🌍 해외 도시 감지 → 구글맵")
         is_intl = True
     else:
         # GPT 판단 (원본 질문 포함!)
@@ -833,10 +817,10 @@ JSON: {"is_international": bool}"""
             is_intl = json.loads(check.choices[0].message.content).get('is_international', False)
         
         except Exception as e:
-            print(f"❌ GPT 판단 실패: {e}")
+            # print(f"❌ GPT 판단 실패: {e}")
             is_intl = True
     
-    print(f"🌍 {'해외' if is_intl else '국내'}")
+    # print(f"🌍 {'해외' if is_intl else '국내'}")
     
     if is_intl:
         # 해외: GPT로 영문명 변환
@@ -844,10 +828,10 @@ JSON: {"is_international": bool}"""
             start_en = await translate_to_english(start_original, client)
             goal_en = await translate_to_english(goal_original, client)
             
-            print(f"🌍 변환: {start} → {start_en}, {goal} → {goal_en}")
+            # print(f"🌍 변환: {start} → {start_en}, {goal} → {goal_en}")
             
         except Exception as e:
-            print(f"❌ 영문명 변환 실패: {e}")
+            # print(f"❌ 영문명 변환 실패: {e}")
             start_en = start
             goal_en = goal
         
@@ -857,7 +841,7 @@ JSON: {"is_international": bool}"""
         car_link = f"https://www.google.com/maps/dir/?api=1&origin={safe_start}&destination={safe_goal}&travelmode=driving"
         transit_link = f"https://www.google.com/maps/dir/?api=1&origin={safe_start}&destination={safe_goal}&travelmode=transit"
         
-        print(f"🚗 링크 생성 완료")
+        # print(f"🚗 링크 생성 완료")
         
         return f"""# {start} → {goal}
 
@@ -958,8 +942,9 @@ async def handle_mcp(request):
     if request.method == "OPTIONS":
         return Response("", status_code=200)
     
+    # [수정] 스펙 준수: GET 요청 시 405 반환
     if request.method == "GET":
-        return Response("Travel-Mate MCP Server Running", status_code=200)
+        return Response("Method Not Allowed", status_code=405)
     
     if request.method != "POST":
         return Response("Method not allowed", status_code=405)
@@ -972,7 +957,7 @@ async def handle_mcp(request):
     method = body.get("method")
     msg_id = body.get("id")
     
-    print(f"📩 요청: {method}")
+    # print(f"📩 요청: {method}")
     
     # 초기화
     if method == "initialize":
@@ -980,9 +965,10 @@ async def handle_mcp(request):
             "jsonrpc": "2.0",
             "id": msg_id,
             "result": {
-                "protocolVersion": "2024-11-05",
+                # [수정] Protocol Version 2025-03-26으로 변경
+                "protocolVersion": "2025-03-26",
                 "capabilities": {"tools": {}},
-                "serverInfo": {"name": "TravelMate", "version": "12.0"}
+                "serverInfo": {"name": "TravelMate", "version": "13.0"}
             }
         })
     
@@ -1060,11 +1046,11 @@ JSON: {"type": "place/route/guide"}"""
                     type_data = json.loads(type_check.choices[0].message.content)
                     question_type = type_data.get('type', 'place')
                     
-                    print(f"❓ 질문 유형: {question_type}")
+                    # print(f"❓ 질문 유형: {question_type}")
                     
-                    # 규정 및 정보 안내 (검색 기능 추가)
+                    # [추가] 규정 및 정보 안내 (검색 기능)
                     if question_type == "guide":
-                        print(f"🔍 [규정/정보] DuckDuckGo 검색 시작: {question}")
+                        # print(f"🔍 [규정/정보] DuckDuckGo 검색 시작: {question}")
                         
                         try:
                             # DuckDuckGo 검색
@@ -1076,7 +1062,7 @@ JSON: {"type": "place/route/guide"}"""
                             
                             search_text = "\n\n".join(search_results)
                             
-                            print(f"✅ 검색 완료: {len(results)}개")
+                            # print(f"✅ 검색 완료: {len(results)}개")
                             
                             # GPT 답변 생성
                             resp = await client.chat.completions.create(
@@ -1161,7 +1147,7 @@ JSON: {"type": "place/route/guide"}"""
                         is_intl = data.get('is_intl', False)
                         keywords = data.get('keywords', [])
                         
-                        print(f"🔍 키워드: {keywords}, 해외: {is_intl}, 지역: {regions}")
+                        # print(f"🔍 키워드: {keywords}, 해외: {is_intl}, 지역: {regions}")
                         
                         results = []
                         
@@ -1178,7 +1164,7 @@ JSON: {"type": "place/route/guide"}"""
                                 
                                 # 재시도 로직 (5개 미만이면)
                                 if isinstance(places, list) and len(places) < 5:
-                                    print(f"⚠️ 결과 부족 ({len(places)}개) → 재검색 (display=50)")
+                                    # print(f"⚠️ 결과 부족 ({len(places)}개) → 재검색 (display=50)")
                                     
                                     # 2차 검색
                                     more_places = await search_domestic(kw, regions, client, retry=True)
@@ -1191,7 +1177,7 @@ JSON: {"type": "place/route/guide"}"""
                                                 if len(places) >= 10:
                                                     break
                                     
-                                    print(f"✅ 재검색 후: {len(places)}개")
+                                    # print(f"✅ 재검색 후: {len(places)}개")
                                 
                                 # 포맷
                                 res = format_places_result(kw, places)
@@ -1299,11 +1285,12 @@ if __name__ == "__main__":
     print("=" * 60)
     print("🚀 Travel-Mate v13.0 - 여행 규정 및 팁 안내 (검색 기능) 추가")
     print("=" * 60)
+    print("✅ Protocol Version Updated: 2025-03-26")
     print("✅ DuckDuckGo 검색 연동")
     print("✅ 규정/에티켓 질문 자동 감지")
-    print("✅ GPT 필터링 완화 (최소 5개)")
-    print("✅ 결과 부족 시 재검색 (display=50)")
+    print("✅ GET 요청 시 405 Method Not Allowed 반환 (스펙 준수)")
     print("=" * 60)
     
+    # 수정: Railway 동적 포트 사용
     port = int(os.getenv("PORT", 8000))
     uvicorn.run(app, host="0.0.0.0", port=port)
