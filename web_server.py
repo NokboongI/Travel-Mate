@@ -10,7 +10,7 @@ from starlette.middleware.cors import CORSMiddleware
 from openai import AsyncOpenAI
 import googlemaps
 import traceback
-from duckduckgo_search import DDGS  # [추가] 검색 라이브러리
+from duckduckgo_search import DDGS  # [필수] 검색 라이브러리
 
 # =======================================================================
 # API 키 (환경변수에서 읽기)
@@ -313,7 +313,7 @@ JSON: {"english": "..."}"""
         return text
 
 async def extract_regions_hybrid(text, client):
-    """하이브리드 지역명 추출 (규칙 기반 + GPT - 개선판)"""
+    """하이브리드 지역명 추출 (랜드마크 포함 개선)"""
     
     # 1단계: 빠른 규칙 기반
     found = []
@@ -327,47 +327,33 @@ async def extract_regions_hybrid(text, client):
     found = list(set(found))
     found.sort(key=len, reverse=True)
     
-    # print(f"📍 규칙 기반 지역: {found}")
-    
-    if len(found) >= 2:
-        return found[:3]
-    
-    # 2단계: GPT로 보완 (프롬프트 강화!)
+    # 2단계: GPT로 보완 (프롬프트 대폭 개선: 랜드마크 포함)
     if not client:
         return found[:3] if found else []
     
     try:
-        # print("⚠️ 지역명 부족 → GPT 호출")
         resp = await client.chat.completions.create(
             model="gpt-4o-mini",
             messages=[
                 {
                     "role": "system",
-                    "content": """텍스트에서 **명시적으로 언급된** 지역명만 추출하세요.
+                    "content": """텍스트에서 **검색의 중심이 되는 위치(지역, 랜드마크)**를 추출하세요.
 
-중요 규칙:
-1. 텍스트에 **직접 나온** 지역만 추출
-2. 추측하거나 확장하지 마세요
-3. 공항/랜드마크가 있으면 해당 도시만 추가
+포함 대상:
+- 행정구역 (서울, 강남, 부산 등)
+- **대학교 (숭실대, 고려대, 연세대 등)**
+- **지하철역 (서울대입구역, 강남역 등)**
+- **주요 랜드마크 (롯데타워, 한강공원, 에펠탑 등)**
 
 예시:
-입력: "도쿄 나카노 라멘"
-출력: {"regions": ["도쿄", "나카노"]}
-
-입력: "샤를드골 공항"  
-출력: {"regions": ["파리", "샤를드골"]}
-
-입력: "잠실 양식당"
-출력: {"regions": ["잠실"]}
-
-입력: "에펠탑"
-출력: {"regions": ["파리", "에펠탑"]}
+- "숭실대 맛집" → {"regions": ["숭실대"]}
+- "고려대 인근 라멘" → {"regions": ["고려대"]}
+- "도쿄역 맛집" → {"regions": ["도쿄", "도쿄역"]}
+- "롯데타워 전망대" → {"regions": ["잠실", "롯데타워"]}
 
 절대 금지:
-- 텍스트에 없는 지역 추가
-- 비슷한 지역 추측
-- 한국 질문에 일본 지역 추가
-- 일본 질문에 한국 지역 추가
+- "인근", "근처", "주변" 같은 상대적 위치 단어는 제외
+- 없는 지역 추측 금지
 
 JSON: {"regions": ["지역1", "지역2"]}"""
                 },
@@ -379,8 +365,6 @@ JSON: {"regions": ["지역1", "지역2"]}"""
         
         data = json.loads(resp.choices[0].message.content)
         gpt_regions = data.get('regions', [])
-        
-        # print(f"💡 GPT 추출 지역: {gpt_regions}")
         
         # 결합
         all_regions = list(set(found + gpt_regions))
@@ -1108,7 +1092,7 @@ JSON: {"type": "place/route/guide"}"""
                     
                     # 장소 검색
                     else:
-                        # 1단계: 지역명 추출
+                        # 1단계: 지역명 추출 (랜드마크 포함)
                         regions = await extract_regions_hybrid(question, client)
                         
                         # 2단계: 키워드 추출 + 국내/해외 판단
@@ -1289,6 +1273,7 @@ if __name__ == "__main__":
     print("✅ DuckDuckGo 검색 연동")
     print("✅ 규정/에티켓 질문 자동 감지")
     print("✅ GET 요청 시 405 Method Not Allowed 반환 (스펙 준수)")
+    print("✅ 랜드마크(대학교, 지하철역 등) 지역 추출 개선")
     print("=" * 60)
     
     # 수정: Railway 동적 포트 사용
